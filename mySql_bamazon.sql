@@ -13,7 +13,7 @@ CREATE TABLE Products
     (100) NOT NULL,
   department_name VARCHAR
     (100)  NOT NULL,
-  item_price DECIMAL
+  item_price DOUBLE
     (10 ,2) NOT NULL,
   stock_qty INTEGER
     (100) NOT NULL,
