@@ -7,8 +7,6 @@ CREATE TABLE Products
 (
     id INTEGER NOT NULL
     AUTO_INCREMENT,
-  item_id INTEGER
-    (25) NOT NULL,
   item_name VARCHAR
     (100) NOT NULL,
   department_name VARCHAR
@@ -22,61 +20,61 @@ CREATE TABLE Products
 );
 
     INSERT INTO Products
-        (item_id, item_name, department_name, item_price, stock_qty)
+        ( item_name, department_name, item_price, stock_qty)
     VALUES
-        (1234043, "Golf Shoes", "Footwear", 125.50, 100);
+        ("Golf Shoes", "Footwear", 125.99, 100);
 
     INSERT INTO Products
-        (item_id, item_name, department_name, item_price, stock_qty)
+        ( item_name, department_name, item_price, stock_qty)
     VALUES
-        (8590234, "Hiking Boots", "Footwear", 175.00, 75);
+        ("Hiking Boots", "Footwear", 175.97, 75);
 
     INSERT INTO Products
-        (item_id, item_name, department_name, item_price, stock_qty)
+        ( item_name, department_name, item_price, stock_qty)
     VALUES
-        (8690425, "Moisture Wicking Socks", "Footwear", 15.75, 34);
+        ("Moisture Wicking Socks", "Footwear", 15.75, 34);
 
     INSERT INTO Products
-        (item_id, item_name, department_name, item_price, stock_qty)
+        ( item_name, department_name, item_price, stock_qty)
     VALUES
-        (8673913, "Therapeutic Insoles", "Footwear", 33.25, 15);
+        ("Therapeutic Insoles", "Footwear", 33.25, 15);
 
     INSERT INTO Products
-        (item_id, item_name, department_name, item_price, stock_qty)
+        ( item_name, department_name, item_price, stock_qty)
     VALUES
-        (3859601, "Cargo Shorts", "Outerwear", 34.50, 34);
+        ("Cargo Shorts", "Outerwear", 34.55, 34);
 
     INSERT INTO Products
-        (item_id, item_name, department_name, item_price, stock_qty)
+        ( item_name, department_name, item_price, stock_qty)
     VALUES
-        (6847492, "Moisture Wicking Shirt", "Outerwear", 63.50, 25);
+        ("Moisture Wicking Shirt", "Outerwear", 63.55, 25);
 
     INSERT INTO Products
-        (item_id, item_name, department_name, item_price, stock_qty)
+        ( item_name, department_name, item_price, stock_qty)
     VALUES
-        (57683940, "Innertube", "Bicycles", 23.75, 12);
+        ( "Innertube", "Bicycles", 23.75, 12);
 
     INSERT INTO Products
-        (item_id, item_name, department_name, item_price, stock_qty)
+        ( item_name, department_name, item_price, stock_qty)
     VALUES
-        (4758694, "Bicycle", "Bicycles", 403.25, 3);
+        ("Bicycle", "Bicycles", 403.25, 3);
 
     INSERT INTO Products
-        (item_id, item_name, department_name, item_price, stock_qty)
+        ( item_name, department_name, item_price, stock_qty)
     VALUES
-        (3859675, "Water Filter", "Hydration", 14.50, 300);
+        ("Water Filter", "Hydration", 14.99, 300);
 
     INSERT INTO Products
-        (item_id, item_name, department_name, item_price, stock_qty)
+        ( item_name, department_name, item_price, stock_qty)
     VALUES
-        (4810385, "Camp Chef Kitchen", "Outdoor Cookwear", 123.50, 15);
+        ("Camp Chef Kitchen", "Outdoor Cookwear", 123.99, 15);
 
     INSERT INTO Products
-        (item_id, item_name, department_name, item_price, stock_qty)
+        ( item_name, department_name, item_price, stock_qty)
     VALUES
-        (58694245, "Camel Back", "Hydration", 33.25, 175);
+        ( "Camel Back", "Hydration", 33.25, 175);
 
     INSERT INTO Products
-        (item_id, item_name, department_name, item_price, stock_qty)
+        ( item_name, department_name, item_price, stock_qty)
     VALUES
-        (47582940, "Colapsable Bowl", "Outdoor Cookwear", 3.25, 85);
+        ( "Colapsable Bowl", "Outdoor Cookwear", 3.25, 85);

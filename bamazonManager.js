@@ -2,7 +2,6 @@ var mysql = require("mysql");
 var inquirer = require("inquirer");
 var columnify = require('columnify');
 
-
 // amount of characters that form the width of the content box:
 boxWidth = 65;
 
@@ -60,21 +59,24 @@ function start() {
 
 // DISPLAY INVENTORY FUNCTION:
 function displayInventory() {
-    // console.log("Product Search View");
-    connection.query("SELECT * FROM Products ", function (err, results) {
+    connection.query("SELECT * FROM Products", function (err, results) {
         if (err) throw err;
-        console.log("\n");
-        console.log("                            CURRENT BAMAZON PRODUCTS                                    ");
-        console.log("****************************************************************************************");
-        for (var i = 0; i < results.length; i++) {
-            console.log("id: " + results[i].id + " || " + results[i].item_name + " || Price: " + results[i].item_price + " ea." + " || Qty in Stock: " + results[i].stock_qty);
-        }
-        console.log("****************************************************************************************");
-        console.log("\n");
-    });
-    connection.end();
+        server = results;
+        // dress up columnify to align prices and  quantity integers on the right.
+        var columns = columnify(results, {
+            config: {
+                item_price: {
+                    align: 'right'
+                },
+                stock_qty: {
+                    align: 'right'
+                }
+            },
+        });
+        console.log(columns + "\n-----------------------------------------------------------------\n")
+        start();
+    })
 }
-
 //   LOW INVENTORY FUNCTION:
 function inventoryView() {
     // console.log("Low Inventory View");
@@ -82,15 +84,20 @@ function inventoryView() {
     connection.query(query, function (err, results) {
         if (err) throw err;
         console.log("\n");
-        console.log("                            LOW INVENTORY ON BAMAZON                                  ");
-        console.log("****************************************************************************************");
-        for (var i = 0; i < results.length; i++) {
-            console.log("id: " + results[i].id + " || " + results[i].item_name + " || Price: " + results[i].item_price + " ea." + " || Qty in Stock: " + results[i].stock_qty);
-        }
-        console.log("****************************************************************************************");
-        console.log("\n");
+        console.log("                    LOW INVENTORY ON BAMAZON                 ");
+        console.log("*************************************************************");
+        var columns = columnify(results, {
+            config: {
+                item_price: {
+                    align: 'right'
+                },
+                stock_qty: {
+                    align: 'right'
+                }
+            },
+        });
+        console.log(columns + "\n-----------------------------------------------------------------\n")
     });
-    connection.end();
 }
 
 // RETURN ITEM FUNCTION:
@@ -106,19 +113,16 @@ function addProduct() {
             type: "input",
             name: "item",
             message: "What is the name of the new product?"
-        },
-        {
+        }, {
             type: "input",
             name: "department",
             message: "What department does the new product belong to?",
-        },
-        {
+        }, {
             type: "input",
             name: "price",
             message: "What is the price per unit?"
             // validate: 
-        },
-        {
+        }, {
             type: "input",
             name: "stock_qty",
             message: "How many items are being added to inventory?"
@@ -126,8 +130,8 @@ function addProduct() {
         }]).then(function (input) {
             console.log('Adding new Item: \n item_name = ' + input.product_name + '\n' + 'price = ' + input.product.price + '\n' + ' stock_qty = ' + input.stock_qty);
 
-            var query = 'INSERT INTO Product SET ?';
             connection.query(query, input, function (err, results) {
+                var query = 'INSERT INTO Product SET ?';
                 if (err) throw err;
                 console.log("test adding new item");
             });
