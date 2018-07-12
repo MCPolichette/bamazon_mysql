@@ -3,7 +3,6 @@ var inquirer = require("inquirer");
 // console table packages:
 const cTable = require('console.table');
 var columnify = require('columnify');
-var shopping_cart = [];
 var server = [];
 // amount of characters that form the width of the content box:
 boxWidth = 65;
@@ -30,12 +29,11 @@ connection.connect(function (err) {
     console.log("    You are connected to BAMAZON_DB as guest: " + connection.threadId + "\n\n");
     start();
 });
+
 function start() {
     connection.query("SELECT * FROM Products", function (err, results) {
         if (err) throw err;
         server = results;
-
-
         // dress up columnify to align prices and  quantity integers on the right.
         var columns = columnify(results, {
             config: {
@@ -49,7 +47,6 @@ function start() {
         });
         console.log(columns + "\n**********************************************************************************************\n"
         )
-
         shopping();
     })
 };
@@ -57,8 +54,6 @@ function start() {
 function shopping() {
     connection.query("SELECT * FROM Products", function (err, results) {
         if (err) throw err;
-
-        console.log("You have " + shopping_cart.length + " items in your shopping cart")
 
         inquirer.prompt([{
             name: "item",
@@ -72,13 +67,11 @@ function shopping() {
                 }
                 return item_array;
             }
-        },
-        {
+        }, {
             name: "cart_qty",
             type: "input",
             message: "How many would you like to add to your cart?"
         }]).then(function (answer) {
-
             var chosenItem;
             for (var i = 0; i < results.length; i++) {
                 // console.log(results[i]);
@@ -86,65 +79,49 @@ function shopping() {
                     chosenItem = results[i];
                 }
             }
-            //  console.log(chosenItem)
-
-            // May come back to this point and attempt to make a new REPEATABLE function to clean up and validate inputs
-            if (chosenItem.stock_qty < answer.cart_qty) {
-                console.log("Sorry, We only have " + chosenItem.stock_qty + " in stock.\nPlease adjust your qty:");
-                inquirer.prompt([{
-                    name: "new_cart_qty",
-                    type: "input",
-                    message: "How many would you like to add to your cart?"
-                }]).then(function (new_answer) {
-                    // console.log(new_answer);
-                    chosenItem.cart = new_answer.new_cart_qty;
-                    chosenItem.total_price = new_answer.new_cart_qty * chosenItem.item_price
-                })
-                shopping_cart.push(chosenItem);
-                continue_prompt();
-            } else chosenItem.cart = answer.cart_qty;
-            shopping_cart.push(chosenItem);
-            console.log("shopping cart" + shopping_cart);
-            continue_prompt();
-        }
-        )
-    }
-    )
-};
-function shopping_cart_function() {
-    console.log("\n\n###################################################\n##                                               ##                             \n##            -\______    SHOPPING               ##\n##             -\_____|     CART                 ##     \n##               o---o    CONTENTS :             ##\n##                                               ##  \n###################################################")
-    console.log("shoppingcart")
-    // var table = cTable.shopping_cart
-    // console.table
-    column = columnify(shopping_cart, {
-        columns: [item_name, department_name, item_price, cart, total_price],
-        config: [{
-            item_price: {
-                align: right
-            }
-        }]
+            // Takes new object and creates new variables for it.
+            chosenItem.cart = chosenItem.cart = answer.cart_qty;
+            chosenItem.total_price = answer.cart_qty * chosenItem.item_price
+            confirm_purchase(chosenItem);
+        })
     })
-    console.log(column);
-    connection.end();
+};
+function confirm_purchase(chosenItem) {
+    if (chosenItem.stock_qty < chosenItem.cart) {
+        console.log("Sorry, We only have " + chosenItem.stock_qty + " in stock.\nPlease adjust your qty:");
+        inquirer.prompt([{
+            name: "new_cart_qty",
+            type: "input",
+            message: "How many would you like to add to your cart?"
+        }]).then(function (answer) {
+            // console.log(answer);
+            chosenItem.cart = answer.cart_qty;
+            confirm_purchase(chosenItem);
+        })
+    } else if (chosenItem.stock_qty > chosenItem.cart) {
+        console.log("\n\n#################################################################\n##                                                             ##\n##                  ______7 -     SHOPPING                     ##\n##                 |_____/ --      CART                        ##\n##                  o---o ---     CONTENTS :                   ##\n##                                                             ##\n#################################################################\n\n"
+            + chosenItem.item_name + " x " + chosenItem.cart + " For a grand total of $" + chosenItem.total_price + "\n");
+        console.log("#################################################################\n")
+        // confirm purchase with a printout
+        inquirer.prompt([{
+            name: "purchase",
+            type: "confirm",
+            message: "are you ready to purchase?",
+        }]).then(function (answer) {
+            if (answer.purchase) {
+                //    adjust inventory and restart the computer.
+                console.log("Purchase Confirmed!n\n")
+
+
+            } else {
+                console.log("\nOk. Take a look at our inventory and make a new selection./n");
+                // connection.end();
+                // function to take someone back to begining or end the program.
+            };
+        })
+    };
 };
 
-function continue_prompt() {
-    inquirer.prompt([{
-        name: "continue",
-        type: "list",
-        message: "What would you like to do next?",
-        choices: ["Continue Shopping", "Check Out / See my Shopping Cart"],
-    }]).then(function (answer) {
-        switch (answer.action) {
-            case "Continue Shopping":
-                shopping();
-                break;
-            case "Check Out / See my Shopping Cart":
-                shopping_cart_function();
-                break;
-        }
-    })
-}
 // Customer'spurchases::
 // connection.query(
 //     "UPDATE auctions SET ? WHERE ?", [{
