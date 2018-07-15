@@ -74,7 +74,7 @@ function displayInventory() {
             },
         });
         console.log(columns + "\n-----------------------------------------------------------------\n")
-        start();
+        continue_working();
     })
 }
 //   LOW INVENTORY FUNCTION:
@@ -96,14 +96,49 @@ function inventoryView() {
                 }
             },
         });
-        console.log(columns + "\n-----------------------------------------------------------------\n")
+        console.log(columns + "\n-----------------------------------------------------------------\n");
+        continue_working();
     });
 }
 
 // RETURN ITEM FUNCTION:
 function returnItem() {
     console.log("Return Item View");
-}
+    connection.query("SELECT * FROM Products", function (err, results) {
+        if (err) throw err;
+
+        inquirer.prompt([{
+            name: "item",
+            type: "list",
+            message: "Which product would you like to return?",
+            choices: function () {
+
+                var item_array = [];
+                for (var i = 0; i < results.length; i++) {
+                    item_array.push(results[i].item_name);
+                }
+                return item_array;
+            }
+        }, {
+            name: "return_qty",
+            type: "input",
+            message: "How many would you like to return?"
+        }]).then(function (answer) {
+            var chosenItem;
+            for (var i = 0; i < results.length; i++) {
+                // console.log(results[i]);
+                if (results[i].item_name === answer.item) {
+                    chosenItem = results[i];
+                }
+            }
+            // Takes new object and creates new variables for it.
+            chosenItem.return = answer.return_qty;
+            chosenItem.total_price = answer.return_qty * chosenItem.item_price
+            adjust_inventory(chosenItem);
+            continue_working();
+        })
+    })
+};
 
 // ADD PRODUCT FUNCTION:
 function addProduct() {
@@ -136,4 +171,59 @@ function addProduct() {
                 console.log("test adding new item");
             });
         })
+    continue_working();
+}
+
+function adjust_inventory(chosenItem) {
+    chosenItem.total_price = chosenItem.return * chosenItem.item_price
+    // confirm purchase with a printout
+    console.log("#################################################################\n");
+    // console.log(chosenItem)
+    console.log("\n\n  RETURNING " + chosenItem.item_name + " x " + chosenItem.return + " For a grand total of $" + chosenItem.total_price + "\n");
+    console.log("#################################################################\n")
+
+    console.log("Return Confirmed!\n")
+    difference = chosenItem.stock_qty + chosenItem.return
+    connection.query(
+        "UPDATE Products SET ? WHERE ?", [{
+            stock_qty: difference
+        },
+        {
+            id: chosenItem.id
+        }],
+        function (error) {
+            if (error) throw error;
+            console.log("Return Complete");
+            var columns = columnify(chosenItem, {
+                config: {
+                    item_price: {
+                        align: 'right'
+                    },
+                    stock_qty: {
+                        align: 'right'
+                    }
+                },
+            })
+            continue_working()
+        }
+    )
+}
+// } else if (!answer.return) {
+
+
+
+
+function continue_working() {
+    inquirer.prompt([{
+        name: "start_over",
+        type: "confirm",
+        message: "Would you like to do something else??",
+    }]).then(function (answer) {
+        if (answer.start_over) {
+            start();
+        } else {
+            console.log("\n=================================================================\n\n        GGGGG   OOOO   OOOO  DDDDD     BBBBB  YY  YY EEEEE  \n       GG      OO  OO OO  OO DD  DD    BB  BB  YYYY  EE     \n       GG  GGG OO  OO OO  OO DD   DD   BBBBB    YY   EEEE   \n       GG   GG OO  OO OO  OO DD   DD   BB  BB   YY   EE     \n        GGGGG   OOOO   OOOO  DDDDDD    BBBBBB   YY   EEEEEE \n      \n===================  Thanks for visiting =========================")
+            connection.end();
+        }
+    })
 }

@@ -82,7 +82,7 @@ function shopping() {
                 }
             }
             // Takes new object and creates new variables for it.
-            chosenItem.cart = chosenItem.cart = answer.cart_qty;
+            chosenItem.cart = answer.cart_qty;
             chosenItem.total_price = answer.cart_qty * chosenItem.item_price
             confirm_purchase(chosenItem);
         })
